@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TodoForm from "./component/TodoForm";
 import { TodoProvider } from "./context/Todocontext";
-import { json } from "react-router";
+import TodoItem from "./component/TodoItem";
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -18,16 +18,21 @@ function App() {
     );
   };
 
+
   useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem("todos")) || []; 
+    const storedTodos = JSON.parse(localStorage.getItem("todos") || "[]");
     if (storedTodos.length > 0) {
       setTodos(storedTodos);
     }
   }, []);
 
+
+
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
-  },[todos])
+  }, [todos]);
+
+  
 
   const deleteTodo = (id) => {
     setTodos((prev) => prev.filter((prevTodo) => prevTodo.id !== id));
@@ -42,6 +47,7 @@ function App() {
       )
     );
   };
+
   return (
     <TodoProvider
       value={{ todos, addTodo, updateTodo, deleteTodo, togglecompleted }}
@@ -52,11 +58,15 @@ function App() {
             Manage Your Todos
           </h1>
           <div className="mb-4">
-            {/* Todo form goes here */} Todo form goes here
+             
             <TodoForm />
           </div>
           <div className="flex flex-wrap gap-y-3">
-            TO Do Item Will Come Here
+            {todos.map((todo) => (
+              <div key={todo.id} className="w-full">
+                <TodoItem todo={todo} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
